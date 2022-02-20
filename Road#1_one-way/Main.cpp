@@ -59,7 +59,7 @@ int main(void) {
 			dilate(diff, diff, Mat::ones(Size(7, 7), CV_8UC1), Point(-1, -1), 2);
 			erode(diff, diff, Mat::ones(Size(7, 7), CV_8UC1), Point(-1, -1), 2);
 
-			// * 프레임 위에 선을 구려주는 것
+			// * 프레임 위에 선을 그려주는 것
 			line(frame, Point(80, 140), Point(120, 130), Scalar(0, 0, 255), 5, 8, 0);
 			line(frame, Point(90, 258), Point(170, 232), Scalar(0, 0, 255), 5, 8, 0);
 
