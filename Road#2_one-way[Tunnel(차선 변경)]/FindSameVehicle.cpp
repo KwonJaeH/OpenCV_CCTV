@@ -6,7 +6,7 @@ Mat DetectVehicle::set_ROI(Mat img) {
 	Mat output;
 	Mat mask = Mat::zeros(img.rows, img.cols, CV_8UC1);
 
-	// »ç´Ù¸®²Ã °ü½É¿µ¿ª ¼³Á¤ ( ´Ü¼øÈ÷ ÇÁ·¹ÀÓ¿¡¼­ ÁÂÇ¥¸¦ Ã£¾Æ ÀÌ¿ë )
+	// ì‚¬ë‹¤ë¦¬ê¼´ ê´€ì‹¬ì˜ì—­ ì„¤ì • ( ë‹¨ìˆœíˆ í”„ë ˆì„ì—ì„œ ì¢Œí‘œë¥¼ ì°¾ì•„ ì´ìš© )
 
 	Point point[4]{ Point(320,50),Point(400,50),
 				Point(580,350),Point(30,350) };
@@ -47,10 +47,10 @@ int DetectVehicle::road_same_vehicle(Rect rct, vector<bool> exist,int LanePos) {
 	if (pos == -1)
 		return -1;
 
-	// ÀúÀåµÇ¾îÀÖ´ø lane°ú ´Ù¸£¸é Â÷¼± º¯°æ & »¡°£»öÀ¸·Î º¯°æ
+	// ì €ì¥ë˜ì–´ìˆë˜ laneê³¼ ë‹¤ë¥´ë©´ ì°¨ì„  ë³€ê²½ & ë¹¨ê°„ìƒ‰ìœ¼ë¡œ ë³€ê²½
 	if (vehicle[pos].pos_of_lane != LanePos) {
 		vehicle[pos].pos_of_lane = LanePos;
-		vehicle[pos].color = (0, 0, 255);
+		vehicle[pos].color = {0, 0, 255};
 	}
 
 	vehicle[pos].rct.x = rct.x;
@@ -61,7 +61,7 @@ int DetectVehicle::road_same_vehicle(Rect rct, vector<bool> exist,int LanePos) {
 }
 
 void DetectVehicle::DrawAndEraseVehicle(vector<vector<Point>> contours, Mat frame, DetectLane dl) {
-	vector<bool> exist(100, false); // ÇöÀç ÇÁ·¹ÀÓ¿¡¼­ Á¸Àç ¿©ºÎ
+	vector<bool> exist(100, false); // í˜„ì¬ í”„ë ˆì„ì—ì„œ ì¡´ì¬ ì—¬ë¶€
 
 	for (int i = 0; i < contours.size(); i++) {
 		Rect rct = boundingRect(contours[i]);
@@ -70,7 +70,7 @@ void DetectVehicle::DrawAndEraseVehicle(vector<vector<Point>> contours, Mat fram
 		if ((contourArea(contours[i]) >= 800)) { 
 
 			
-			// ¸î¹ø LaneÀÎÁö ÆÇº°
+			// ëª‡ë²ˆ Laneì¸ì§€ íŒë³„
 			
 			int LanePos = dl.WhatLane(rct);
 
@@ -78,25 +78,25 @@ void DetectVehicle::DrawAndEraseVehicle(vector<vector<Point>> contours, Mat fram
 			vehicle_idx = road_same_vehicle(rct, exist, LanePos);
 
 			if (vehicle_idx >= 0) {
-				// ±âÁ¸ Â÷·® Á¸Àç
+				// ê¸°ì¡´ ì°¨ëŸ‰ ì¡´ì¬
 
 				exist[vehicle_idx] = true;
 				rectangle(frame, vehicle[vehicle_idx].rct, vehicle[vehicle_idx].color, 1, 4, 0);
 
 			}
 			else {
-				// Lane º°·Î »ö±ò ´Ù¸£°Ô »ğÀÔ
+				// Lane ë³„ë¡œ ìƒ‰ê¹” ë‹¤ë¥´ê²Œ ì‚½ì…
 
 				obj e;
 				Scalar color;
 				if (LanePos == 1) {
-					color = { 255, 0, 0 }; // ÆÄ¶û
+					color = { 255, 0, 0 }; // íŒŒë‘
 				}
 				else if(LanePos == 2) {
-					color = { 0, 255, 0 }; // ÃÊ·Ï
+					color = { 0, 255, 0 }; // ì´ˆë¡
 				}
 				else {
-					color = { 0, 0, 255 }; // »¡°­
+					color = { 0, 0, 255 }; // ë¹¨ê°•
 				}
 
 				rectangle(frame, Rect(rct.x, rct.y, rct.width, rct.height), color, 1, 4, 0);
@@ -109,9 +109,9 @@ void DetectVehicle::DrawAndEraseVehicle(vector<vector<Point>> contours, Mat fram
 		}
 	}
 
-	// À§ °úÁ¤ÀÌ ³¡³ª°í 
-	// Á¸ÀçÇÏÁö ¾Ê´Â vehicleÀº °ü½É¿µ¿ª¿¡ µé¾î¿Ô´Ù°¡ ¹ş¾î³­ °ÍÀÌ¹Ç·Î
-	// Áö¿öÁÖ´Â °úÁ¤
+	// ìœ„ ê³¼ì •ì´ ëë‚˜ê³  
+	// ì¡´ì¬í•˜ì§€ ì•ŠëŠ” vehicleì€ ê´€ì‹¬ì˜ì—­ì— ë“¤ì–´ì™”ë‹¤ê°€ ë²—ì–´ë‚œ ê²ƒì´ë¯€ë¡œ
+	// ì§€ì›Œì£¼ëŠ” ê³¼ì •
 	vector<int> clear_veh;
 	for (int i = 0; i < vehicle.size(); i++) {
 		if (!exist[i])
