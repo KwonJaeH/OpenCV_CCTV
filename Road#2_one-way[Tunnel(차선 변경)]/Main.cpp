@@ -7,8 +7,8 @@
 #include "detect_vehicle.h"
 #include "detect_lane.h"
 
-//í„°ë„ 2
-#define URL "í„°ë„ ì˜ìƒ"
+//ÅÍ³Î 2
+#define URL "http://211.252.223.177:1935/live/985.stream/playlist.m3u8"
 
 int main(void) {
 
@@ -20,11 +20,11 @@ int main(void) {
 	VideoCapture cap(URL);
 	if (!cap.isOpened())
 	{
-		cerr << "ì¹´ë©”ë¼ë¥¼ ì—´ ìˆ˜ ì—†ìŠµë‹ˆë‹¤." << endl;
+		cerr << "Ä«¸Ş¶ó¸¦ ¿­ ¼ö ¾ø½À´Ï´Ù." << endl;
 		return -1;
 	}
 
-	// ì°¨ì„  ì¶”ì¶œ í–ˆëŠ”ì§€
+	// Â÷¼± ÃßÃâ Çß´ÂÁö
 
 	bool lane_detect = false;
 	
@@ -34,78 +34,88 @@ int main(void) {
 		cap.read(frame);
 		if (frame.empty())
 		{
-			cerr << "ìº¡ì³ ì‹¤íŒ¨" << endl;
+			cerr << "Ä¸ÃÄ ½ÇÆĞ" << endl;
 			break;
 		}
 
-
+		
 		if (!lane_detect) {
-			//ì°¨ì„  ê²€ì¶œ
+			//Â÷¼± °ËÃâ
 
 			Mat white_image;
 
-			// 1. í°ìƒ‰ ë„ì¶œ
+			// 1. Èò»ö µµÃâ
 			white_image = DL.ColorFilter(frame);
-		
-			// 2. gray ë³€í™˜
+			
+			//// 2. gray º¯È¯
 			cvtColor(white_image, white_image, COLOR_BGR2GRAY);
 
-			// 3. ê´€ì‹¬ ì˜ì—­ ì„¤ì •
+
+			//// 3. °ü½É ¿µ¿ª ¼³Á¤
 			white_image = DL.set_ROI(white_image);
-			
-			// 4. Blur ì²˜ë¦¬
+
+			//
+			//// 4. Blur Ã³¸®
 			GaussianBlur(white_image, white_image, Size(7, 7), 0);
-			
-			// 5. Canny Edge ì¶”ì¶œ
+
+			//// 5. Canny Edge ÃßÃâ
 			Canny(white_image, white_image, 50, 250);
 
-			// 6. HoughLinesP ì§ì„  ì¶”ì¶œ
+
+			//// 6. HoughLinesP Á÷¼± ÃßÃâ
 			DL.Trans_Hough(white_image);
 
-			// * 50í”„ë ˆì„ ì´ìƒ ê²€ì‚¬í•´ì„œ ì¶”ì¶œí–ˆëŠ”ì§€
+			//// * 50ÇÁ·¹ÀÓ ÀÌ»ó °Ë»çÇØ¼­ ÃßÃâÇß´ÂÁö
 			lane_detect = DL.Done_detectLane();
 
 		}
 		else {
-			// ì´ë™ì²´ ì¶”ì 
+			// ÀÌµ¿Ã¼ ÃßÀû
 
 			Mat diff;
 
-			// 1. gray ë³€í™˜
+			// 1. gray º¯È¯
 			Mat gray_frame, gray_bg;
 			cvtColor(frame, gray_frame, COLOR_BGR2GRAY);
+			
 			if (!background.empty()) {
 				cvtColor(background, gray_bg, COLOR_BGR2GRAY);
 
 
-				// 2. ì´ì „ í”„ë ˆì„ê³¼ì˜ ì°¨ì´ ì €ì¥
+				// 2. ÀÌÀü ÇÁ·¹ÀÓ°úÀÇ Â÷ÀÌ ÀúÀå
 				absdiff(gray_frame, gray_bg, diff);
 
-				// 3. ì´ì§„íŒŒì¼ë¡œ ë³€í™˜
+//				GaussianBlur(diff, diff, Size(5, 5), 0);
+
+				// 3. ÀÌÁøÆÄÀÏ·Î º¯È¯
 				threshold(diff, diff, 50, 255, THRESH_BINARY);
 
-				// 4. ê´€ì‹¬ì˜ì—­ ì„¤ì •
+				// 4. °ü½É¿µ¿ª ¼³Á¤
 				diff = DV.set_ROI(diff);
-
-				// 5. íŒ½ì°½ -> ì¹¨ì‹, closing ì—°ì‚°
-				dilate(diff, diff, Mat::ones(Size(7, 7), CV_8UC1), Point(-1, -1), 2);
+				
+				// 5. ÆØÃ¢ -> Ä§½Ä, closing ¿¬»ê
+				dilate(diff, diff, Mat::ones(Size(7,7), CV_8UC1), Point(-1, -1), 2);
 				erode(diff, diff, Mat::ones(Size(3, 3), CV_8UC1), Point(-1, -1), 1);
 
-				// * í”„ë ˆì„ ìœ„ì— ì„ (ë²”ìœ„)ì„ ê·¸ë ¤ì£¼ëŠ” ê²ƒ
-				line(frame, Point(320, 50), Point(400, 50), Scalar(0, 0, 255), 1, 8, 0);
+
+				// * ÇÁ·¹ÀÓ À§¿¡ ¼±(¹üÀ§)À» ±×·ÁÁÖ´Â °Í
+				line(frame, Point(310, 60), Point(410, 60), Scalar(0, 0, 255), 1, 8, 0);
 				line(frame, Point(30, 350), Point(580, 350), Scalar(0, 255, 0), 1, 8, 0);
 				
 
-				// * ì°¨ì„  ê·¸ë¦¬ê¸°
+				// * Â÷¼± ±×¸®±â
 				DL.DrawRoadLane(frame);
 
-				// 6. contours ì°¾ê¸°
+				// 6. contours Ã£±â
 				vector<vector<Point>> contours;
 				vector<Vec4i> hierarchy;
 				findContours(diff, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
 
-				// 7. ê°™ì€ ì°¨ ì¸ì‹ ë° ì§€ìš°ê¸°
+				// 7. °°Àº Â÷ ÀÎ½Ä ¹× Áö¿ì±â
 				DV.DrawAndEraseVehicle(contours, frame, DL);
+
+				// * Â÷¼± º¯°æ Â÷·® ¼ö Ãâ·Â
+				DL.Print_ChangeVehicle(frame);
 
 				imshow("Live", frame);
 			}
@@ -114,9 +124,9 @@ int main(void) {
 			cap.read(background);
 		}
 
-		//int fps = cap.get(CAP_PROP_FPS);
+		int fps = cap.get(CAP_PROP_FPS);
 
-		int wait = int(1.0 / 100 * 1000);
+		int wait = int(1.0 / fps * 1000);
 
 		if (waitKey(wait) >= 0)
 			break;

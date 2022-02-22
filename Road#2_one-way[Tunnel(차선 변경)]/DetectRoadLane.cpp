@@ -54,7 +54,6 @@ void DetectLane::set_equation() {
 
 	a = incli;
 	b = (-1) * (incli * pt1.x) + pt1.y;
-	cout << a << " "<< b << "\n";
 }
 
 bool DetectLane::Done_detectLane() {
@@ -101,4 +100,18 @@ int DetectLane::WhatLane(Rect rct) {
 	}
 	  
 	return 0;
+}
+
+void DetectLane::Add_ChangeVehicle() {
+	change_lane_cnt++;
+}
+
+void DetectLane::Print_ChangeVehicle(Mat frame) {
+
+
+	char alarm[30];
+	sprintf_s(alarm, "Lane change : %d", change_lane_cnt);
+
+	putText(frame, alarm, Point(10, 100), 0, 1, Scalar(0, 200, 255), 2, 8);
+
 }

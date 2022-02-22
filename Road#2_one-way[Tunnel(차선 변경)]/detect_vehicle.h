@@ -22,6 +22,6 @@ public:
 
 	Mat set_ROI(Mat img);
 	double euclidean_dist(double x1, double y1, double x2, double y2);
-	int road_same_vehicle(Rect rct, vector<bool> exist,int LanePos);
-	void DrawAndEraseVehicle(vector<vector<Point>> contours, Mat frame, DetectLane dl);
+	int road_same_vehicle(Rect rct, vector<bool> exist,int LanePos, DetectLane& dl);
+	void DrawAndEraseVehicle(vector<vector<Point>> contours, Mat frame, DetectLane& dl);
 };

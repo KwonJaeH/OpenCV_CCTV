@@ -6,7 +6,7 @@ Mat DetectVehicle::set_ROI(Mat img) {
 	Mat output;
 	Mat mask = Mat::zeros(img.rows, img.cols, CV_8UC1);
 
-	// ì‚¬ë‹¤ë¦¬ê¼´ ê´€ì‹¬ì˜ì—­ ì„¤ì • ( ë‹¨ìˆœíˆ í”„ë ˆì„ì—ì„œ ì¢Œí‘œë¥¼ ì°¾ì•„ ì´ìš© )
+	// »ç´Ù¸®²Ã °ü½É¿µ¿ª ¼³Á¤ ( ´Ü¼øÈ÷ ÇÁ·¹ÀÓ¿¡¼­ ÁÂÇ¥¸¦ Ã£¾Æ ÀÌ¿ë )
 
 	Point point[4]{ Point(320,50),Point(400,50),
 				Point(580,350),Point(30,350) };
@@ -24,7 +24,7 @@ double DetectVehicle::euclidean_dist(double x1, double y1, double x2, double y2)
 	return sqrt(x_dif * x_dif + y_dif * y_dif);
 }
 
-int DetectVehicle::road_same_vehicle(Rect rct, vector<bool> exist,int LanePos) {
+int DetectVehicle::road_same_vehicle(Rect rct, vector<bool> exist, int LanePos, DetectLane& dl) {
 
 	double cur_x = (rct.x + (rct.x + rct.width)) / 2, cur_y = (rct.y + (rct.y + rct.height)) / 2;
 
@@ -33,7 +33,7 @@ int DetectVehicle::road_same_vehicle(Rect rct, vector<bool> exist,int LanePos) {
 
 	for (int i = 0; i < vehicle.size(); i++) {
 		Rect before = vehicle[i].rct;
-		double bf_x = (before.x + (before.x+before.width)) / 2, bf_y = (before.y +(before.y+ before.height)) / 2;
+		double bf_x = (before.x + (before.x + before.width)) / 2, bf_y = (before.y + (before.y + before.height)) / 2;
 
 		double result = euclidean_dist(bf_x, bf_y, cur_x, cur_y);
 
@@ -47,10 +47,11 @@ int DetectVehicle::road_same_vehicle(Rect rct, vector<bool> exist,int LanePos) {
 	if (pos == -1)
 		return -1;
 
-	// ì €ì¥ë˜ì–´ìˆë˜ laneê³¼ ë‹¤ë¥´ë©´ ì°¨ì„  ë³€ê²½ & ë¹¨ê°„ìƒ‰ìœ¼ë¡œ ë³€ê²½
+	// ÀúÀåµÇ¾îÀÖ´ø lane°ú ´Ù¸£¸é Â÷¼± º¯°æ & »¡°£»öÀ¸·Î º¯°æ
 	if (vehicle[pos].pos_of_lane != LanePos) {
 		vehicle[pos].pos_of_lane = LanePos;
-		vehicle[pos].color = {0, 0, 255};
+		vehicle[pos].color = { 0, 0, 255 };
+		dl.Add_ChangeVehicle();
 	}
 
 	vehicle[pos].rct.x = rct.x;
@@ -60,48 +61,49 @@ int DetectVehicle::road_same_vehicle(Rect rct, vector<bool> exist,int LanePos) {
 	return pos;
 }
 
-void DetectVehicle::DrawAndEraseVehicle(vector<vector<Point>> contours, Mat frame, DetectLane dl) {
-	vector<bool> exist(100, false); // í˜„ì¬ í”„ë ˆì„ì—ì„œ ì¡´ì¬ ì—¬ë¶€
+void DetectVehicle::DrawAndEraseVehicle(vector<vector<Point>> contours, Mat frame, DetectLane& dl) {
+	vector<bool> exist(100, false); // ÇöÀç ÇÁ·¹ÀÓ¿¡¼­ Á¸Àç ¿©ºÎ
 
 	for (int i = 0; i < contours.size(); i++) {
 		Rect rct = boundingRect(contours[i]);
 
 
-		if ((contourArea(contours[i]) >= 800)) { 
+		if ((contourArea(contours[i]) >= 800)) {
 
-			
-			// ëª‡ë²ˆ Laneì¸ì§€ íŒë³„
-			
+
+			// ¸î¹ø LaneÀÎÁö ÆÇº°
+
 			int LanePos = dl.WhatLane(rct);
 
 			int vehicle_idx;
-			vehicle_idx = road_same_vehicle(rct, exist, LanePos);
+			vehicle_idx = road_same_vehicle(rct, exist, LanePos,dl);
 
 			if (vehicle_idx >= 0) {
-				// ê¸°ì¡´ ì°¨ëŸ‰ ì¡´ì¬
+				// ±âÁ¸ Â÷·® Á¸Àç
 
 				exist[vehicle_idx] = true;
 				rectangle(frame, vehicle[vehicle_idx].rct, vehicle[vehicle_idx].color, 1, 4, 0);
 
 			}
 			else {
-				// Lane ë³„ë¡œ ìƒ‰ê¹” ë‹¤ë¥´ê²Œ ì‚½ì…
+				// Lane º°·Î »ö±ò ´Ù¸£°Ô »ğÀÔ
 
 				obj e;
 				Scalar color;
 				if (LanePos == 1) {
-					color = { 255, 0, 0 }; // íŒŒë‘
+					color = { 255, 0, 0 }; // ÆÄ¶û
 				}
-				else if(LanePos == 2) {
-					color = { 0, 255, 0 }; // ì´ˆë¡
+				else if (LanePos == 2) {
+					color = { 0, 255, 0 }; // ÃÊ·Ï
 				}
 				else {
-					color = { 0, 0, 255 }; // ë¹¨ê°•
+					color = { 0, 0, 255 }; // »¡°­
+					dl.Add_ChangeVehicle();
 				}
 
 				rectangle(frame, Rect(rct.x, rct.y, rct.width, rct.height), color, 1, 4, 0);
 				e = { rct,color,LanePos };
-				
+
 				vehicle.push_back(e);
 				exist[vehicle.size() - 1] = true;
 			}
@@ -109,9 +111,9 @@ void DetectVehicle::DrawAndEraseVehicle(vector<vector<Point>> contours, Mat fram
 		}
 	}
 
-	// ìœ„ ê³¼ì •ì´ ëë‚˜ê³  
-	// ì¡´ì¬í•˜ì§€ ì•ŠëŠ” vehicleì€ ê´€ì‹¬ì˜ì—­ì— ë“¤ì–´ì™”ë‹¤ê°€ ë²—ì–´ë‚œ ê²ƒì´ë¯€ë¡œ
-	// ì§€ì›Œì£¼ëŠ” ê³¼ì •
+	// À§ °úÁ¤ÀÌ ³¡³ª°í 
+	// Á¸ÀçÇÏÁö ¾Ê´Â vehicleÀº °ü½É¿µ¿ª¿¡ µé¾î¿Ô´Ù°¡ ¹ş¾î³­ °ÍÀÌ¹Ç·Î
+	// Áö¿öÁÖ´Â °úÁ¤
 	vector<int> clear_veh;
 	for (int i = 0; i < vehicle.size(); i++) {
 		if (!exist[i])
