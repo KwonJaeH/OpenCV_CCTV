@@ -1,5 +1,5 @@
 # OpenCV_CCTV
-CCTV 영상 기반, 범위 내 유클리디안 거리를 이용한 이동체 추적  :oncoming_automobile:   
+실시간 CCTV 영상 기반, 범위 내 유클리디안 거리를 이용한 이동체 추적  :oncoming_automobile:   
 
 - 과정과 결과 영상  
 - 개선해야할 점  
