@@ -2,9 +2,7 @@
 CCTV 영상 기반, 범위 내 유클리디안 거리를 이용한 이동체 추적 및 차선 변경 감지  :oncoming_automobile:   
 
 - 과정과 결과 영상  
-- 개선해야할 점  
-
-[결과영상 넣어야함] 
+- 개선해야할 점   
 
 ----------------------------------------------------
 
@@ -35,7 +33,7 @@ CCTV 영상 기반, 범위 내 유클리디안 거리를 이용한 이동체 추
 > #### [5] Canny Edge 검출   
 > <img src = "https://user-images.githubusercontent.com/81853056/155048153-33304fa6-bbad-42a7-aa94-d0fac9cac60e.png" width="50%" height="50%"></img>  
 > #### [6] 허프변환을 사용하여 직선 검출  
-> <img src = "https://user-images.githubusercontent.com/81853056/155048357-ff19149c-259c-4da4-be30-f0f444c47b64.png" width="50%" height="50%"></img>
+> <img src = "https://user-images.githubusercontent.com/81853056/155048357-ff19149c-259c-4da4-be30-f0f444c47b64.png" width="50%" height="50%"></img>  
 > #### 차선 위치를 파악할 방정식 생성  
 > 구한 직선의 양 끝 x, y 좌표를 사용해 방정식을 구하고,  
 > 그 직선 그래프 기준, 현재 해당하는 이동체의 중심점의 위치에 따라 차선 선택 
@@ -56,7 +54,11 @@ CCTV 영상 기반, 범위 내 유클리디안 거리를 이용한 이동체 추
   
   
 > ### 결과 영상  
-> ![녹화_2022_02_20_15_36_13_664](https://user-images.githubusercontent.com/81853056/154877635-4592ee56-c57c-44a5-bf4c-eae3b4a0f59a.gif)  
+> ( 한번씩 차선 변경하는 차량이 있길래 코드를 작성했지만 화면 녹화를 하려하니 법규를 잘 지키시는 분이 많았다...좋긴한데..)
+>
+> 기본적으로 왼쪽 lane은 **파란색**, 오른쪽 lane은 **초록색**,  차선을 변경하면 **빨간색**으로 표시하였다.   
+> <img src = "https://user-images.githubusercontent.com/81853056/155074931-dcd698ec-a5c0-42c9-b81e-11ac0937feef.gif" width="70%" height="70%"></img>   
+> 겨우 트럭 1대가 영역을 벗어나기 직전에 차선을 변경해 빨간색 박스로 차량을 표시했다.   
     
 ## 개선해야할 점  
 >
