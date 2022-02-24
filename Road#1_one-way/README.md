@@ -33,7 +33,10 @@
 >  #### [6] contour 찾기
 >    ![7](https://user-images.githubusercontent.com/81853056/154876614-39a6c2de-228c-485f-b187-4f591785454d.png)  
 >    findContours 함수를 사용해 윤곽을 추출하고 그 윤곽 대신 사각형으로 씌여줬습니다.  
->    현재 화면에서는 사각형에 랜덤한 색깔을 부여해 각 프레임마다 계속 색깔이 바뀝니다.   
+>    현재 화면에서는 사각형에 랜덤한 색깔을 부여해 각 프레임마다 계속 색깔이 바뀝니다.
+>  
+><img src = "https://user-images.githubusercontent.com/81853056/155462202-2f47832c-1d1a-471c-bbfa-3b361564c4d0.gif" width="60%" height="60%"></img> 
+>  
 > #### [7] 유클리디안 거리를 이용한 같은 이동체 인식        
 >![Inkedsample1_LI](https://user-images.githubusercontent.com/81853056/154877293-d68d2f28-3fa6-4db7-9e83-d0b053f130f5.jpg)
 ![Inkedsample2_LI](https://user-images.githubusercontent.com/81853056/154877302-bbe88767-4bb6-43d9-911f-86dfcc0aa1fd.jpg)   
