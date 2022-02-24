@@ -4,7 +4,7 @@ Mat DetectLane::ColorFilter(Mat frame) {
 
 	Mat white_mask, white_image;
 
-	// ÅÍ³Î ³»ºÎ, È­Áú¿¡ ÀÇÇØ Â÷¼± Èò»ö 255,255,255 ¾Æ´Ô
+	// í„°ë„ ë‚´ë¶€, í™”ì§ˆì— ì˜í•´ ì°¨ì„  í°ìƒ‰ 255,255,255 ì•„ë‹˜
 	Scalar upper_white = Scalar(150, 150, 150);
 	Scalar lower_white = Scalar(80, 80, 80);
 
@@ -20,7 +20,7 @@ Mat DetectLane::set_ROI(Mat img) {
 	Mat output;
 	Mat mask = Mat::zeros(img.rows, img.cols, CV_8UC1);
 
-	// »ç´Ù¸®²Ã °ü½É¿µ¿ª ¼³Á¤ ( ´Ü¼øÈ÷ ÇÁ·¹ÀÓ¿¡¼­ ÁÂÇ¥¸¦ Ã£¾Æ ÀÌ¿ë )
+	// ì‚¬ë‹¤ë¦¬ê¼´ ê´€ì‹¬ì˜ì—­ ì„¤ì • ( ë‹¨ìˆœížˆ í”„ë ˆìž„ì—ì„œ ì¢Œí‘œë¥¼ ì°¾ì•„ ì´ìš© )
 	Point point[4]{ Point(330,50),Point(370,50),
 					Point(320,350),Point(250,350) };
 
@@ -44,11 +44,11 @@ void DetectLane::Trans_Hough(Mat frame) {
 
 void DetectLane::set_equation() {
 
-	// y = (±â¿ï±â)x - (±â¿ï±â*x1) + y1
+	// y = (ê¸°ìš¸ê¸°)x - (ê¸°ìš¸ê¸°*x1) + y1
 	// y = ax + b
 
-	// pt2.x == pt1.x ÀÎ °æ¿ì¿¡´Â »ç¿ë ¸øÇÔ
-	// ÇöÀç ¿µ»ó¿¡¼­´Â ´ë°¢¼±ÀÌ±â ¶§¹®¿¡ »ç¿ë
+	// pt2.x == pt1.x ì¸ ê²½ìš°ì—ëŠ” ì‚¬ìš© ëª»í•¨
+	// í˜„ìž¬ ì˜ìƒì—ì„œëŠ” ëŒ€ê°ì„ ì´ê¸° ë•Œë¬¸ì— ì‚¬ìš©
 	
 	double incli = (pt2.y - pt1.y) / (pt2.x - pt1.x);
 
@@ -58,10 +58,9 @@ void DetectLane::set_equation() {
 
 bool DetectLane::Done_detectLane() {
 	
-	// frame 50°³ ÀÌ»ó¿¡¼­ ÃßÃâÇß´Ù¸é
-	// ´Ù ´õÇÑ x, y ÁÂÇ¥¸¦ frame¼ö·Î ³ª´²¼­ Æò±Õ ÁÂÇ¥¸¦ ±¸ÇÔ
+	// ë‹¤ ë”í•œ x, y ì¢Œí‘œë¥¼ frameìˆ˜ë¡œ ë‚˜ëˆ ì„œ í‰ê·  ì¢Œí‘œë¥¼ êµ¬í•¨
 
-	if (frame_cnt >= 50) {
+	if (frame_cnt) {
 		pt1.x = pt1.x / frame_cnt; pt1.y = pt1.y / frame_cnt;
 		pt2.x = pt2.x / frame_cnt; pt2.y = pt2.y / frame_cnt;
 
@@ -75,8 +74,8 @@ bool DetectLane::Done_detectLane() {
 
 void DetectLane::DrawRoadLane(Mat img) {
 
-	// Àû´çÇÑ ¹üÀ§ÀÇ ÀÓÀÇÀÇ x°ªÀ» ¾Õ¼­ ±¸ÇÑ ¹æÁ¤½Ä¿¡ »ðÀÔÇØ y°ª µµÃâ
-	// µÎ°³ÀÇ ÁÂÇ¥¸¦ ¸¸µé¾î line »ý¼º 
+	// ì ë‹¹í•œ ë²”ìœ„ì˜ ìž„ì˜ì˜ xê°’ì„ ì•žì„œ êµ¬í•œ ë°©ì •ì‹ì— ì‚½ìž…í•´ yê°’ ë„ì¶œ
+	// ë‘ê°œì˜ ì¢Œí‘œë¥¼ ë§Œë“¤ì–´ line ìƒì„± 
 
 	double y1 = a * 250 + b;
 	double y2 = a * 400 + b;
@@ -87,15 +86,15 @@ void DetectLane::DrawRoadLane(Mat img) {
 
 int DetectLane::WhatLane(Rect rct) {
 
-	// Áß½É ÁÂÇ¥
+	// ì¤‘ì‹¬ ì¢Œí‘œ
 	double cur_x = (rct.x + (rct.x+rct.width)) / 2, cur_y = (rct.y + (rct.y+rct.height)) / 2;
 	
 	double y1 = a * cur_x + b;
 
-	if (y1 > cur_y) { // È­¸é ±âÁØ ¿ÞÂÊ Â÷¼±
+	if (y1 > cur_y) { // í™”ë©´ ê¸°ì¤€ ì™¼ìª½ ì°¨ì„ 
 		return 1;
 	}
-	else if (y1 < cur_y) { // ¿À¸¥ÂÊ Â÷¼±
+	else if (y1 < cur_y) { // ì˜¤ë¥¸ìª½ ì°¨ì„ 
 		return 2;
 	}
 	  
