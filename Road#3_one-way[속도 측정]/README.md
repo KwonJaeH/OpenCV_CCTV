@@ -41,6 +41,7 @@
 > #### [1] 차량 마다 Start Line 지날 때의 시간(Start time)을 저장     
 > #### [2] 차량이 End Line 지날 때, 저장된 Start time 과 End time시간의 차이로 총 이동시간(Drive time) 계산   
 > #### [3] '거리 = 속력 x 시간' 공식 사용하여 값 도출   
+> (시간은 프로그램 실행 시간 기준)
 > <br><br>
 > 단순하게 Queue를 이용하여 해보려고 했다.  
 > ![image](https://user-images.githubusercontent.com/81853056/155651447-01502419-3a5b-4e63-91fc-3f6c0aa5eeb4.png)  
