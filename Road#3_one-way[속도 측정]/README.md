@@ -41,6 +41,17 @@
 > #### [1] 차량 마다 Start Line 지날 때의 시간(Start time)을 저장     
 > #### [2] 차량이 End Line 지날 때, 저장된 Start time 과 End time시간의 차이로 총 이동시간(Drive time) 계산   
 > #### [3] '거리 = 속력 x 시간' 공식 사용하여 값 도출   
+> <br><br>
+> 단순하게 Queue를 이용하여 해보려고 했다.  
+> ![image](https://user-images.githubusercontent.com/81853056/155651447-01502419-3a5b-4e63-91fc-3f6c0aa5eeb4.png)  
+> 도로 하나에 " 3. 속도를 측정하는 범위 내에서는 차량이 차선을 변경하지 않는다. " 가정으로 추월하는 차량이 없다면 Queue처럼 FIFO가 될 것이다.     
+> 그렇게 이동체를 추적하지 않고 단순히 처음 시간만 Lane별로 저장하고, End line을 벗어나면 Queue에서 pop 해서 시간을 비교해 도출하려했다.   
+> <img src = "https://user-images.githubusercontent.com/81853056/155652187-246daed5-b4cc-44bd-a6cf-2c930d6e6238.png" width="50%" height="50%"></img>    
+> **초록선 = Start Line**  
+> *case 1* 같이 조건을 주면 당연히 프레임 때문에 당연히 잡지 못했고,  
+> *case 2* 같이 start line을 일정 범위를 줘봤을 때는 그 파란색 점처럼 범위 내에 한번 잡히는 경우에는 Queue를 사용해도 되지만,  
+> 빨간색 점 같은 경우 프레임 때문에 범위 내에 두번 잡히는 경우가 발생하여 그 상태로 Queue에 집어넣으면 옳지 않은 값이 나왔다.  
+> 그래서 이동체 추적으로 속도 측정 범위 내에 차량이 있는지 계속 추적해야지 범위를 벗어날 때 값을 도출할 수 있었다. 
   
 <br></br>
 > ## 차선 검출  
