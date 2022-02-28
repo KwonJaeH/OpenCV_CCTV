@@ -9,7 +9,7 @@
 
 <img src = "https://user-images.githubusercontent.com/81853056/155456071-0668ecbc-61c0-40d9-9714-a5d7d263c25c.png" width="50%" height="50%"></img>     
 해당 영상을 기준으로 속도 추정   
-임의로 정한 범위 내 차량 속도 정    
+임의로 정한 범위 내 차량 속도 추정    
 (* 모든 코드는 해당 영상에만 해당되게 작성함.)  
   
     
